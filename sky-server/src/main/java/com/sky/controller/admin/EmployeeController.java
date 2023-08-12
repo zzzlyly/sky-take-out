@@ -14,9 +14,11 @@ import com.sky.utils.JwtUtil;
 import com.sky.vo.EmployeeLoginVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import javafx.scene.media.MediaPlayer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.yaml.snakeyaml.events.Event;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -86,17 +88,59 @@ public class EmployeeController {
      */
     @PostMapping
     @ApiOperation("新增员工")
-    public  Result save(@RequestBody EmployeeDTO employeeDTO){
-        log.info("新增员工:{}",employeeDTO);
+    public Result save(@RequestBody EmployeeDTO employeeDTO) {
+        log.info("新增员工:{}", employeeDTO);
         employeeService.save(employeeDTO);
         return Result.success();
     }
 
+    /**
+     * 查询员工
+     *
+     * @param employeePageQueryDTO
+     * @return
+     */
     @GetMapping("/page")
     @ApiOperation("查询员工")
-    public Result<PageResult> page(EmployeePageQueryDTO employeePageQueryDTO){
+    public Result<PageResult> page(EmployeePageQueryDTO employeePageQueryDTO) {
         log.info("查询员工");
         PageResult pageResult = employeeService.pageQuery(employeePageQueryDTO);
         return Result.success(pageResult);
+    }
+
+    @PutMapping
+    @ApiOperation("编辑员工信息")
+    public Result update(@RequestBody EmployeeDTO employeeDTO) {
+        log.info("编辑员工信息{}", employeeDTO);
+        Employee employee = employeeService.update(employeeDTO);
+        return Result.success(employee);
+    }
+
+    /**
+     * 根据id查询员工
+     *
+     * @param id
+     * @return
+     */
+    @GetMapping("/{id}")
+    @ApiOperation("根据id查询员工")
+    public Result getbyID(@PathVariable Long id) {
+        Employee employee = employeeService.getbyTD(id);
+        return Result.success(employee);
+    }
+
+
+    /**
+     * 启用、禁用员工账号
+     *
+     * @param status
+     * @return
+     */
+    @PostMapping("/status/{status}")
+    @ApiOperation("启用、禁用员工账号")
+    public Result banEmployee(@PathVariable Integer status, @RequestParam Long id) {
+        log.info("启用、禁用员工账号");
+        employeeService.banEmployee(status, id);
+        return Result.success();
     }
 }

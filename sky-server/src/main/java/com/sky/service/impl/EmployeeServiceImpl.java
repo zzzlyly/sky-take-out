@@ -21,7 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -99,6 +98,39 @@ public class EmployeeServiceImpl implements EmployeeService {
         List<Employee> records = page.getResult();
         long total = page.getTotal();
         return new PageResult(total,records);
+    }
+
+    /**
+     * 编辑员工信息
+     * @param employeeDTO
+     * @return
+     */
+    public Employee update(EmployeeDTO employeeDTO) {
+        Employee employee = new Employee();
+        BeanUtils.copyProperties(employeeDTO,employee);
+        employee.setUpdateTime(LocalDateTime.now());
+        employee.setUpdateUser(BaseContext.getCurrentId());
+        employeeMapper.update(employee);
+        return employee;
+    }
+
+    /**
+     * 启用、禁用员工账号
+     * @param status
+     * @param id
+     */
+    public void banEmployee(Integer status, Long id) {
+        employeeMapper.banEmployee(status,id);
+    }
+
+    /**
+     * 根据id查询员工
+     * @param id
+     * @return
+     */
+    public Employee getbyTD(Long id) {
+        Employee employee = employeeMapper.getbyID(id);
+        return employee;
     }
 
 }
